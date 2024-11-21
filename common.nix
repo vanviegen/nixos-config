@@ -1,18 +1,8 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ lib, config, pkgs, ... }:
-
-{
-  imports = [
-      ./local.nix
-    ];
-  boot.kernelPackages = pkgs.linuxPackages_6_10;
-
+{ lib, config, pkgs, ... }: {
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  # boot.kernelPackages = pkgs.linuxPackages_6_10;
 
     # Enable networking, disable firewall.
   networking.networkmanager.enable = true;
@@ -39,8 +29,9 @@
   # Enable the X11 windowing system with KDE Plasma
   services.xserver.enable = true;
   services.desktopManager.plasma6.enable = true;
-  services.displayManager.defaultSession = "plasmax11";
+  services.displayManager.defaultSession = "plasma";
   services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -122,6 +113,25 @@
     killall
     wget
     distrobox
+    vim
+    appimage-run
+    broot
+    curl
+    eza
+    file
+    fuse
+    fzf
+    graphviz
+    plantuml
+    p7zip
+    xz
+    mplayer
+    ripgrep
+    sshfs
+    tmux
+    unzip
+    xsel
+    zsh
   ];
 
   programs = {
@@ -138,6 +148,7 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  services.openssh.settings.PasswordAuthentication = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
@@ -145,7 +156,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
 
     # Dynamic libraries for unpackaged programs
   programs.nix-ld.enable = true;
