@@ -3,6 +3,8 @@
       ./hardware-configuration.nix
   ];
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -145,6 +147,8 @@
     inkscape
     krita
     imagemagick
+    nil # language server for vscode
+    direnv
   ];
 
   # hardware.bluetooth.enable = true; # enables support for Bluetooth
