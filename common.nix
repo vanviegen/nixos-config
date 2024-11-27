@@ -16,7 +16,7 @@
   # Set your time zone.
   time.timeZone = "Europe/Amsterdam";
 
-    # Select internationalisation properties.
+  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
@@ -35,8 +35,7 @@
   services.xserver.enable = true;
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "plasma";
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
+  services.xserver.displayManager.lightdm.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
