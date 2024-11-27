@@ -60,12 +60,15 @@
       TAG=="seat", ENV{ID_FOR_SEAT}=="usb-pci-0000_16_00_0-usb-0_5", ENV{ID_SEAT}="seat1"
     '';
   };
+  environment.systemPackages = with pkgs; [
+    kdialog
+  ];
 
   # Prevent dup login
   services.xserver.displayManager.sessionCommands = ''
-  active_sessions=$(loginctl list-sessions --no-legend | awk -v user=$USER -v seat=$\{XDG_SEAT:-seat0} -v sid=$XDG_SESSION_ID '{gsub(/^[ \t]+/, ""); if ($3 == user && ($6 == "active" || $6 == "online") && $1 != sid) count++} END {print count}')
+  active_sessions=$(loginctl list-sessions --no-legend | awk -v user=$USER -v sid=$XDG_SESSION_ID '{gsub(/^[ \t]+/, ""); if ($3 == user && $5 !~ /^tty/ && ($6 == "active" || $6 == "online") && $1 != sid) count++} END {print count}')
   if [ "$active_sessions" -gt 0 ] ; then
-    zenity --error --text="User $USER is already logged in."
+    kdialog --error "User $USER is already logged in."
     exit 1
   fi
 

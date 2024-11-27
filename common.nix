@@ -37,6 +37,11 @@
   services.displayManager.defaultSession = "plasma";
   services.xserver.displayManager.lightdm.enable = true;
 
+  xdg.portal = {
+    enable = true;
+    extraPortals = [pkgs.xdg-desktop-portal-kde];
+  };
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
