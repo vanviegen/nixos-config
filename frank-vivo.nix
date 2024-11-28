@@ -5,18 +5,18 @@
   boot.kernelParams = [
     "amd_iommu=on"
     "iommu=pt"
-    "nvidia_drm.modeset=0"
-    "nvidia_drm.fbdev=0"
+    "nvidia_drm.modeset=1"
+    "nvidia_drm.fbdev=1"
   ];
 
   # Load nvidia driver for Xorg and Wayland
   boot.blacklistedKernelModules = [ "nouveau" ];
   services.xserver.videoDrivers = ["nvidia"];
   
+  services.displayManager.sddm.wayland.enable = true;
   hardware.nvidia = {
  
-    # As we're using prime offloading, nvidia should have little to do with modesetting.
-    modesetting.enable = false;
+    modesetting.enable = true;
 
     # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
     # Enable this if you have graphical corruption issues or application crashes after waking
