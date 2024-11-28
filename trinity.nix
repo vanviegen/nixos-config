@@ -9,7 +9,6 @@
 
   # Load nvidia driver for Xorg and Wayland
   boot.blacklistedKernelModules = [ "nouveau" ];
-  hardware.opengl.enable = true;
   services.xserver.videoDrivers = ["nvidia" "amdgpu"];
   
   hardware.nvidia = {
@@ -21,7 +20,7 @@
     # Enable this if you have graphical corruption issues or application crashes after waking
     # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead 
     # of just the bare essentials.
-    powerManagement.enable = false;
+    powerManagement.enable = true;
 
     # Fine-grained power management. Turns off GPU when not in use.
     # Experimental and only works on modern Nvidia GPUs (Turing or newer).
@@ -42,12 +41,12 @@
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
-      version = "560.35.03";
-      sha256_64bit = "sha256-8pMskvrdQ8WyNBvkU/xPc/CtcYXCa7ekP73oGuKfH+M=";
-      sha256_aarch64 = "sha256-s8ZAVKvRNXpjxRYqM3E5oss5FdqW+tv1qQC2pDjfG+s=";
-      openSha256 = "sha256-/32Zf0dKrofTmPZ3Ratw4vDM7B+OgpC4p7s+RHUjCrg=";
-      settingsSha256 = "sha256-kQsvDgnxis9ANFmwIwB7HX5MkIAcpEEAHc8IBOLdXvk=";
-      persistencedSha256 = "sha256-E2J2wYYyRu7Kc3MMZz/8ZIemcZg68rkzvqEwFAL3fFs=";
+      version = "565.57.01";
+      sha256_64bit = "sha256-buvpTlheOF6IBPWnQVLfQUiHv4GcwhvZW3Ks0PsYLHo==";
+      sha256_aarch64 = "sha256-aDVc3sNTG4O3y+vKW87mw+i9AqXCY29GVqEIUlsvYfE==";
+      openSha256 = "sha256-unknown";
+      settingsSha256 = "sha256-42RMyO2LlUjRIBx1lbr8VWNj3zgheaCsVnUcCJdsARY==";
+      persistencedSha256 = "sha256-fUt+7ZESLzZLA4RobN8x1LkdjWPVNweF6cizyK9p8uU==";
     };
   };
   
@@ -66,7 +65,7 @@
 
   # Prevent dup login
   services.xserver.displayManager.sessionCommands = ''
-  active_sessions=$(loginctl list-sessions --no-legend | awk -v user=$USER -v sid=$XDG_SESSION_ID '{gsub(/^[ \t]+/, ""); if ($3 == user && $5 !~ /^tty/ && ($6 == "active" || $6 == "online") && $1 != sid) count++} END {print count}')
+  active_sessions=$(loginctl list-sessions --no-legend | awk -v user=$USER -v sid=$XDG_SESSION_ID 'BEGIN {count=0} {gsub(/^[ \t]+/, ""); if ($3 == user && $5 !~ /^tty/ && ($6 == "active" || $6 == "online") && $1 != sid) count++} END {print count}')
   if [ "$active_sessions" -gt 0 ] ; then
     kdialog --error "User $USER is already logged in."
     exit 1

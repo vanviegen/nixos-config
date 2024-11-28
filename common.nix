@@ -6,7 +6,7 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_6_10;
+  boot.kernelPackages = pkgs.linuxPackages_6_11;
   boot.kernel.sysctl."kernel.sysrq" = 502;
 
     # Enable networking, disable firewall.
@@ -30,12 +30,15 @@
     LC_TELEPHONE = "nl_NL.UTF-8";
     LC_TIME = "nl_NL.UTF-8";
   };
+  
+  hardware.opengl.enable = true;
+  hardware.opengl.driSupport = true;
 
   # Enable the X11 windowing system with KDE Plasma
   services.xserver.enable = true;
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "plasma";
-  services.xserver.displayManager.lightdm.enable = true;
+  services.displayManager.sddm.enable = true;
 
   xdg.portal = {
     enable = true;
