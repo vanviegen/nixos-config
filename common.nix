@@ -3,6 +3,9 @@
       ./hardware-configuration.nix
   ];
 
+  system.autoUpgrade.enable = true;
+  system.autoUpgrade.channel = "https://channels.nixos.org/nixos-24.11";
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -31,8 +34,7 @@
     LC_TIME = "nl_NL.UTF-8";
   };
   
-  hardware.opengl.enable = true;
-  hardware.opengl.driSupport = true;
+  hardware.graphics.enable = true;
 
   # Enable the X11 windowing system with KDE Plasma
   services.xserver.enable = true;
@@ -148,6 +150,14 @@
     inkscape
     krita
     imagemagick
+  ];
+
+  nixpkgs.config.permittedInsecurePackages = [
+    # for openra
+    "dotnet-runtime-wrapped-6.0.36"
+    "dotnet-runtime-6.0.36"
+    "dotnet-sdk-wrapped-6.0.428"
+    "dotnet-sdk-6.0.428"
   ];
 
   # hardware.bluetooth.enable = true; # enables support for Bluetooth
