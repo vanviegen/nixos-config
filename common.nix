@@ -1,4 +1,13 @@
-{ lib, config, pkgs, ... }: {
+{ lib, config, pkgs, ... }: 
+let
+  nix-software-center = import (pkgs.fetchFromGitHub {
+    owner = "snowfallorg";
+    repo = "nix-software-center";
+    rev = "0.1.2";
+    sha256 = "xiqF1mP8wFubdsAQ1BmfjzCgOD3YZf7EGWl9i69FTls=";
+  }) {};
+in
+{
   imports = [
       ./hardware-configuration.nix
   ];
@@ -110,6 +119,7 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -150,6 +160,10 @@
     inkscape
     krita
     imagemagick
+    nix-software-center
+    pstree
+    uv # python
+    bun # js
   ];
 
   nixpkgs.config.permittedInsecurePackages = [
@@ -160,7 +174,7 @@
     "dotnet-sdk-6.0.428"
   ];
 
-  # hardware.bluetooth.enable = true; # enables support for Bluetooth
+  hardware.bluetooth.enable = true; # enables support for Bluetooth
   # hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 
   programs = {
