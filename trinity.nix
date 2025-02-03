@@ -3,18 +3,24 @@
   boot.kernelParams = [
     "amd_iommu=on"
     "iommu=pt"
-    "nvidia_drm.modeset=1"
-    "nvidia_drm.fbdev=1"
+    "nvidia_drm.modeset=0"
+    "nvidia_drm.fbdev=0"
   ];
 
   # Load nvidia driver for Xorg and Wayland
   boot.blacklistedKernelModules = [ "nouveau" ];
   services.xserver.videoDrivers = ["nvidia" "amdgpu"];
-  
+
+
+  fileSystems."/extra" = {
+    device = "/dev/disk/by-uuid/66B2C4FFB2C4D529";
+    fsType = "ntfs-3g";
+  };
+
   hardware.nvidia = {
  
     # Modesetting is required.
-    modesetting.enable = true;
+    modesetting.enable = false;
 
     # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
     # Enable this if you have graphical corruption issues or application crashes after waking
@@ -61,6 +67,8 @@
   };
   environment.systemPackages = with pkgs; [
     kdialog
+    qemu_kvm
+    OVMFFull
   ];
 
   # Prevent dup login
@@ -70,11 +78,31 @@
     kdialog --error "User $USER is already logged in."
     exit 1
   fi
-
-  #if [ "$XDG_SEAT" = seat1] ; then
-  #  /usr/bin/env xrandr --auto || true
-  #fi
   ''; 
+
+  security.sudo.configFile = ''
+  ALL ALL=(ALL) NOPASSWD: /etc/nixos/windows-kvm.sh
+  '';
+
+  services.displayManager.sessionPackages = [
+    (pkgs.runCommand "windows-kvm-session" { passthru.providedSessions = [ "windows-kvm" ]; } ''
+      mkdir -p $out/share/xsessions
+      cat <<EOF > $out/share/xsessions/windows-kvm.desktop
+[Desktop Entry]
+Name=Windows 11
+Exec=/etc/nixos/windows-kvm.sh session
+Type=Application
+DesktopNames=X-NIXOS-SYSTEMD-AWARE
+EOF
+    '')
+  ];
+
+  # Disable suspend, as it is not reliable.
+  powerManagement.enable = false;
+  systemd.targets.sleep.enable = false;
+  systemd.targets.suspend.enable = false;
+  systemd.targets.hibernate.enable = false;
+  systemd.targets.hybrid-sleep.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

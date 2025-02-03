@@ -49,7 +49,8 @@ in
   services.xserver.enable = true;
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "plasma";
-  services.displayManager.sddm.enable = true;
+  #services.displayManager.sddm.enable = true;
+  services.xserver.displayManager.lightdm.enable = true;
 
   xdg.portal = {
     enable = true;
@@ -132,7 +133,6 @@ in
     usbutils
     pciutils
     switcheroo-control
-    qemu_kvm
     openra
     avahi
     killall
@@ -162,6 +162,8 @@ in
     imagemagick
     nix-software-center
     pstree
+    lsof
+    steamtinkerlaunch
     uv # python
     bun # js
   ];
@@ -212,5 +214,7 @@ in
     enable = true;
     binfmt = true;
   };
+
+  services.flatpak.enable = true;
 
 }
