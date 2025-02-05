@@ -104,6 +104,19 @@ EOF
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
 
+  # Don't allow users to suspend/shutdown. This is a server.
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id.indexOf("org.freedesktop.login") == 0 &&
+         (action.id.indexOf("power-off") != -1 ||
+          action.id.indexOf("reboot") != -1 ||
+          action.id.indexOf("suspend") != -1 ||
+          action.id.indexOf("hibernate") != -1)) {
+        return polkit.Result.NO;
+      }
+    });
+  '';
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

@@ -60,9 +60,9 @@ if [ "$1" != "stop" -a "$1" != "reset" ] ; then
     -device ide-hd,drive=extra-disk,bus=ahci.0 \
     -device ide-hd,drive=windows-disk,bus=ahci.1 \
     -device ide-hd,drive=linux-disk,bus=ahci.2 \
-    -drive id=extra-disk,file=/dev/sdc,if=none,media=disk,format=raw \
-    -drive id=windows-disk,file=/dev/sdb,if=none,media=disk,format=raw \
-    -drive id=linux-disk,file=/dev/sda,if=none,media=disk,format=raw,snapshot=on \
+    -drive id=extra-disk,file=/dev/disk/by-id/ata-WDC_WD20EFRX-68AX9N0_WD-WMC1T2917024,if=none,media=disk,format=raw \
+    -drive id=windows-disk,file=/dev/disk/by-id/ata-WDC_WDS240G1G0A-00SS50_171211470507,if=none,media=disk,format=raw \
+    -drive id=linux-disk,file=/dev/disk/by-id/ata-WDC_WDS240G1G0A-00SS50_171211470507,if=none,media=disk,format=raw,snapshot=on \
     -netdev user,id=hostnet0 \
     -device e1000,netdev=hostnet0 \
     -device qemu-xhci,id=xhci \

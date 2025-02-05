@@ -20,6 +20,7 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_6_11;
   boot.kernel.sysctl."kernel.sysrq" = 502;
+  boot.supportedFilesystems = [ "bcachefs" ];
 
     # Enable networking, disable firewall.
   networking.networkmanager.enable = true;
@@ -164,6 +165,7 @@ in
     pstree
     lsof
     steamtinkerlaunch
+    cryptsetup
     uv # python
     bun # js
   ];
