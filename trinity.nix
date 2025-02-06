@@ -1,4 +1,6 @@
 { config, lib, pkgs, modulesPath, ... }: {
+  networking.hostName = "trinity";
+  
   # Ensure proper configuration for PCI passthrough
   boot.kernelParams = [
     "amd_iommu=on"
@@ -98,11 +100,14 @@ EOF
   ];
 
   # Disable suspend, as it is not reliable.
-  powerManagement.enable = false;
+  powerManagement.enable = true;
   systemd.targets.sleep.enable = false;
   systemd.targets.suspend.enable = false;
   systemd.targets.hibernate.enable = false;
   systemd.targets.hybrid-sleep.enable = false;
+  systemd.tmpfiles.rules = [
+    "w /sys/devices/system/cpu/cpufreq/policy*/energy_performance_preference - - - - balance_power"
+  ];
 
   # Don't allow users to suspend/shutdown. This is a server.
   security.polkit.extraConfig = ''
@@ -116,6 +121,64 @@ EOF
       }
     });
   '';
+
+  # Zigbee2MQTT
+  users.users.z2m = {
+    isSystemUser = true;
+    description = "Zigbee2MQTT";
+    group = "dialout";
+  };
+  systemd.services.zigbee2mqtt = {
+    description = "zigbee2mqtt";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Environment = "NODE_ENV=production";
+      ExecStart = "${pkgs.nodejs}/bin/node index.js";
+      WorkingDirectory = "/opt/zigbee2mqtt";
+      StandardOutput = "inherit";
+      StandardError = "inherit";
+      Restart = "always"; 
+      RestartSec = "10s";
+      User = "z2m";
+    };
+  };
+  services.mosquitto.enable = true;
+
+  # WebCentral
+  systemd.services.webcentral = {
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.nodejs}/bin/node /opt/webcentral/index.js --email domain@vanviegen.net";
+      Restart = "always"; 
+    };
+  };
+
+  users.users.paiq = {
+    isSystemUser = true;
+    home = "/home/paiq";
+    group = "paiq";
+  };
+  users.groups.paiq = {};
+
+  systemd.services.swamp = {
+    description = "SWitchAMPlifier";
+    after = [ "network.target" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      #Environment = "RUST_BACKTRACE=1";
+      #ExecStart = "${pkgs.cargo}/bin/cargo run 192.168.178.108=04 192.168.178.170=01 192.168.178.31:8102";
+      Environment = "LD_LIBRARY_PATH=/home/frank/projects/swamp";
+      ExecStart = "/home/frank/projects/swamp/swamp 192.168.178.108=04 192.168.178.170=01 192.168.178.31:8102";
+      WorkingDirectory = "/home/frank/projects/swamp";
+      StandardOutput = "inherit";
+      StandardError = "inherit";
+      Restart = "always"; 
+      RestartSec = "10s";
+      User = "frank";
+    };
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

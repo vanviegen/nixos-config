@@ -1,0 +1,10 @@
+[Unit]
+Description=Suspend Login
+
+[Service]
+ExecStart=/usr/local/bin/suspend-login.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+

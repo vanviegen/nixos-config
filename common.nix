@@ -22,9 +22,10 @@ in
   boot.kernel.sysctl."kernel.sysrq" = 502;
   boot.supportedFilesystems = [ "bcachefs" ];
 
-    # Enable networking, disable firewall.
+  # Enable networking, disable firewall.
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
+  #services.fail2ban.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Amsterdam";
@@ -55,7 +56,7 @@ in
 
   xdg.portal = {
     enable = true;
-    extraPortals = [pkgs.xdg-desktop-portal-kde];
+    #extraPortals = [pkgs.xdg-desktop-portal-kde];
   };
 
   # Configure keymap in X11
@@ -92,8 +93,6 @@ in
     #jack.enable = true;
   };
   
-
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users = {
     frank = {
@@ -166,8 +165,12 @@ in
     lsof
     steamtinkerlaunch
     cryptsetup
+    python3
     uv # python
     bun # js
+    nodejs # more js
+    pnpm # even more js
+    gcc
   ];
 
   nixpkgs.config.permittedInsecurePackages = [
@@ -219,4 +222,13 @@ in
 
   services.flatpak.enable = true;
 
+  # Spin down hdds
+  environment.etc.hdparm = {
+    target = "udev/rules.d/73-hdparm.rules";
+    text = ''
+      ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -B 90 -S 6 /dev/%k"
+    '';
+  };
+
+  powerManagement.cpufreq.min = 1;
 }
